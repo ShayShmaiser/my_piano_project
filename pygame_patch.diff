@@ -1,0 +1,23 @@
+--- /usr/local/lib/python3.8/site-packages/pygame/__init__.py   2023-07-13 21:10:10.000000000 +0000
++++ /usr/local/lib/python3.8/site-packages/pygame/__init__.py   2023-07-13 21:15:15.000000000 +0000
+@@ -50,7 +50,7 @@
+ # cleanup namespace
+ del pygame_dir
+
+-elif "DISPLAY" in os.environ and "SDL_VIDEO_X11_WMCLASS" not in os.environ:
++elif "DISPLAY" in os.environ and "SDL_VIDEO_X11_WMCLASS" not in os.environ:
+     os.environ["SDL_VIDEO_X11_WMCLASS"] = os.path.basename(sys.argv[0])
+
+ 
+@@ -130,10 +130,6 @@
+ from pygame.version import *  # pylint: disable=wildcard-import; lgtm[py/polluting-import]
+ from pygame.rect import Rect
+
+-try:
+-    from pygame.rect import FRect
+-except ImportError:
+-    FRect = Rect
+
+ from pygame.rwobject import encode_string, encode_file_path
+ import pygame.surflock
+ import pygame.color

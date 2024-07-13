@@ -1,16 +1,18 @@
-import pygame, sys
+import pygame, sys, os
 from button import Button
 import pygame_gui
-pygame.init()
+
 from pymongo import MongoClient
 
-
-    
-client = MongoClient('mongodb+srv://shayshmaiser:PmRtpwEnX6CldTMb@players.tplziu7.mongodb.net/')  # Highlighted
+  
+# client = MongoClient('mongodb+srv://shayshmaiser:PmRtpwEnX6CldTMb@players.tplziu7.mongodb.net/')  # Highlighted
+client = MongoClient("mongodb://shayshmaiser:PmRtpwEnX6CldTMb@localhost:27017/bikorotDB")
 db = client["bikorotDB"]  # Highlighted
 collection = db["Users"]  # Highlighted
 
-
+os.environ["SDL_AUDIODRIVER"] = "dummy"
+pygame.init()
+pygame.mixer.init()
 
 SCREEN = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Menu")
@@ -48,12 +50,13 @@ uwav=pygame.mixer.Sound("assets/u.wav")
 manager = pygame_gui.UIManager((1280, 720))
 clock = pygame.time.Clock()
 
-#username_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((350, 275), (900, 50)), manager=manager, object_id='#username_entry')
-#password_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((350, 375), (900, 50)), manager=manager, object_id='#password_entry')
-
+    #username_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((350, 275), (900, 50)), manager=manager, object_id='#username_entry')
+    #password_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((350, 375), (900, 50)), manager=manager, object_id='#password_entry')
 
 def get_font(size): # Returns Press-Start-2P in the desired size
     return pygame.font.Font("assets/font.ttf", size)
+
+
 
 
 def register():
@@ -236,7 +239,7 @@ def login():
             LOGIN_FAILED = get_font(45).render("LOGIN FAILED", True, "Black")
             LOGIN_FAILED_RECT = LOGIN_FAILED.get_rect(center=(640, 560))
             SCREEN.blit(LOGIN_FAILED, LOGIN_FAILED_RECT)
-  
+
         
         pygame.display.update()
 
@@ -330,7 +333,7 @@ def deleteuser():
             LOGIN_FAILED = get_font(45).render("DELETE FAILED", True, "Black")
             LOGIN_FAILED_RECT = LOGIN_FAILED.get_rect(center=(640, 560))
             SCREEN.blit(LOGIN_FAILED, LOGIN_FAILED_RECT)
-  
+
         
         pygame.display.update()
 
@@ -626,6 +629,7 @@ def game():
         Fmajorpiano(Fmajor_pos_x, Fmajor_pos_y)
         Gmajorpiano(Gmajor_pos_x, Gmajor_pos_y)         
         pygame.display.update()
+        
 def main_menu():
     while True:
         SCREEN.blit(BG, (0, 0))
@@ -666,3 +670,8 @@ def main_menu():
 
 
 main_menu()
+    
+
+# async def main(): 
+# await asyncio.sleep(0)
+# asyncio.run(main())
