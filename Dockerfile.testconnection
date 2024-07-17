@@ -1,0 +1,61 @@
+FROM python:3.8-slim
+
+ENV PYTHONUNBUFFERED=1
+ENV MONGO_URL="mongodb://shayshmaiser:PmRtpwEnX6CldTMb@mongodb-service:27017/bikorotDB"
+ENV SDL_AUDIODRIVER="dummy"
+ENV SDL_VIDEODRIVER="x11"
+ENV DISPLAY=:99
+ENV VNC_PORT=5900
+
+# RUN apt-get update && apt-get install -y \
+#     x11-apps
+RUN apt-get update && apt-get install -y \
+    x11vnc \
+    xvfb \
+    supervisor
+RUN apt-get update && \
+    apt-get install -y wget tar curl xvfb x11vnc
+
+RUN apt-get update && apt-get install -y \
+    x11vnc \
+    xvfb \
+    libsdl2-dev \
+    libsdl2-image-dev \
+    libsdl2-mixer-dev \
+    libsdl2-ttf-dev \
+    libsmpeg-dev \
+    libportmidi-dev \
+    libavformat-dev \
+    libswscale-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    alsa-utils \
+    alsa-oss \
+    libasound2 \
+    procps && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+# RUN pip install numpy PyOpenGL pygame pygame-ce pygame_gui
+RUN pip install pymongo pygame
+WORKDIR /app
+
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . /app/
+
+COPY __init__.py /usr/local/lib/python3.8/site-packages/pygame/__init__.py
+COPY ui_tab_container.py /usr/local/lib/python3.8/site-packages/pygame_gui/elements/ui_tab_container.py
+COPY gui_font_pygame.py /usr/local/lib/python3.8/site-packages/pygame_gui/core/gui_font_pygame.py
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+EXPOSE 5900
+
+CMD ["supervisord", "-n"]
+# CMD ["sh", "-c", "Xvfb :99 -screen 0 1280x720x24 & python3 main.py"]
+# CMD ["/app/entrypoint.sh"]
+# CMD ["python3", "main.py"]
+# ENTRYPOINT ["/app/entrypoint.sh"]

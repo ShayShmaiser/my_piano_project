@@ -1,0 +1,197 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: piano
+#   namespace: default
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: piano
+#   template:
+#     metadata:
+#       labels:
+#         app: piano
+#     spec:
+#       containers:
+#       - name: piano
+#         image: shayshmaiser/piano-app:5.2
+#         ports:
+#         - containerPort: 5900
+#         # command: ["python3", "main.py"]
+#         # command: ["/app/entrypoint.sh"]
+#         env:
+#         - name: MONGO_URL
+#           value: "mongodb://shayshmaiser:PmRtpwEnX6CldTMb@mongodb-service:27017/bikorotDB"
+#         - name: SDL_AUDIODRIVER
+#           value: "dummy"
+#         - name: SDL_VIDEODRIVER
+#           value: "x11"
+#         - name: DISPLAY
+#           # value: "host.docker.internal:0"
+#           value: ":99"
+#         resources:
+#           requests:
+#             cpu: "500m"
+#             memory: "512Mi"
+#############################################
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: piano
+#   namespace: default
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: piano
+#   template:
+#     metadata:
+#       labels:
+#         app: piano
+#     spec:
+#       containers:
+#       - name: piano
+#         image: shayshmaiser/piano-app:5.8
+#         # command: ["python3", "main.py"]
+#         # command: ["/app/entrypoint.sh"]
+#         command: ["/app/entrypoint.sh"]
+#         ports:  
+#         - containerPort: 5900
+#         resources:
+#           requests:
+#             cpu: 100m
+#             memory: 256Mi
+#         env:
+#         - name: MONGO_URL
+#           value: "mongodb://shayshmaiser:PmRtpwEnX6CldTMb@mongodb-service:27017/bikorotDB"
+#         - name: SDL_AUDIODRIVER
+#           # value: "alsa"
+#           value: "dummy"
+#         - name: SDL_VIDEODRIVER
+#           value: "x11"
+#         - name: DISPLAY
+#           value: "host.docker.internal:0"
+#         - name: PULSE_SERVER
+#           value: "unix:/app/pulse/native"
+#           # value: "/var/run/pulse/native"
+#         # - name: PULSE_COOKIE
+#         #   value: "/var/run/pulse/cookie"
+#         volumeMounts:
+#         - mountPath: /app/pulse_native
+#           name: pulse-native
+#           # subPath: native
+#         - mountPath: /root/.config/pulse/cookie
+#           name: pulse-cookie
+#           # subPath: cookie
+#       volumes:
+#       - name: pulse-native
+#         hostPath:
+#           path: /Users/shayshmaiser/my_game_project/pulse
+#           type: DirectoryOrCreate
+#       - name: pulse-cookie
+#         hostPath:
+#           path: /Users/shayshmaiser/.config/pulse/cookie
+#           # type: File
+
+
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: piano
+#   namespace: default
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: piano
+#   template:
+#     metadata:
+#       labels:
+#         app: piano
+#     spec:
+#       containers:
+#       - name: piano
+#         image: shayshmaiser/piano-app:1.0.1
+#         # command: ["python3", "main.py"]
+#         # command: ["/app/entrypoint.sh"]
+#         command: ["/app/entrypoint.sh"]
+#         ports:  
+#         - containerPort: 5900
+#         resources:
+#           requests:
+#             cpu: 100m
+#             memory: 256Mi
+#         env:
+#         - name: MONGO_URL
+#           value: "mongodb://shayshmaiser:PmRtpwEnX6CldTMb@mongodb-service:27017/bikorotDB"
+#         - name: SDL_AUDIODRIVER
+#           value: "pulse"
+#         - name: SDL_VIDEODRIVER
+#           value: "x11"
+#         - name: DISPLAY
+#           value: ":99"
+#         # - name: PULSE_SERVER
+#         #   value: "unix:/app/pulse_native"
+#         volumeMounts:
+#         - mountPath: /app/pulse_native
+#           name: pulse-native
+#           # subPath: native
+#         - mountPath: /root/.config/pulse/cookie
+#           name: pulse-cookie
+#           # subPath: cookie
+#       volumes:
+#       - name: pulse-native
+#         hostPath:
+#           path: /Users/shayshmaiser/my_game_project/pulse
+#           type: DirectoryOrCreate
+#       - name: pulse-cookie
+#         hostPath:
+#           path: /Users/shayshmaiser/.config/pulse/cookie
+
+
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      containers:
+      - name: {{ .Values.appName }}
+        image: "{{ .Values.imageapp.name }}:{{ .Values.imageapp.tag }}"
+        # command: ["python3", "main.py"]
+        command: ["/app/entrypoint.sh"]
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        env:
+        - name: MONGO_URL
+          value: "mongodb://shayshmaiser:PmRtpwEnX6CldTMb@mongodb-service:27017/bikorotDB"
+        - name: SDL_AUDIODRIVER
+          value: "dummy"
+        - name: SDL_VIDEODRIVER
+          value: "x11"
+        - name: DISPLAY
+          value: "host.docker.internal:0"
+      #   volumeMounts:
+      #   - name: x11-socket
+      #     mountPath: /tmp/.X11-unix
+      # volumes:
+      # - name: x11-socket
+      #   hostPath:
+      #     path: /tmp/.X11-unix
+

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.mongoDB.credentials }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.mongoDB.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.mongoDB.name }}
+    spec:
+      containers:
+      - name: {{ .Values.mongoDB.name }}
+        image: "{{ .Values.imagedb.name }}:{{ .Values.imagedb.tag }}"
+        ports:
+        - containerPort: 27017
+          name: {{ .Values.mongoDB.name }}
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.mongoDB.credentials }}
+              key: username
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.mongoDB.credentials }}
+              key: password
+        - name: MONGO_INITDB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.mongoDB.credentials }}
+              key: database
+        volumeMounts:
+        - name: mongodb-storage
+          mountPath: /data/db
+      volumes:
+      - name: mongodb-storage
+        persistentVolumeClaim:
+          claimName: mongo-pvc

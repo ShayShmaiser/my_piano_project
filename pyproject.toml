@@ -1,0 +1,17 @@
+[project]
+name = "my_game_project"
+version = "0.1.0"
+authors = ["shay shmaiser <shay.shmaiser@gmail.com>"]
+
+[build-system]
+requires = ["setuptools", "wheel", "pygame", "pymongo", "pygame_gui"]
+build-backend = "setuptools.build_meta"
+
+[tool.pygbag]
+main = "main.py"
+include = [
+    "**",
+    "assets/**",  # Include all files in the assets directory
+    "assets/images/**",  # Include all image files
+    "assets/sounds/**",  # Include all sound files
+]

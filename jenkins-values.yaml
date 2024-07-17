@@ -1,0 +1,15 @@
+# USER-SUPPLIED VALUES:
+# null
+controller:
+  ingress:
+    enabled: true
+    hostName: jenkins.yourdomain.com
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    tls:
+      - secretName: jenkins-tls
+        hosts:
+          - jenkins.yourdomain.com
