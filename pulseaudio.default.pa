@@ -1,0 +1,1 @@
+load-module module-native-protocol-unix auth-cookie-enabled=1 auth-cookie=/root/.config/pulse/cookie socket=/app/pulse/native

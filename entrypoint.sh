@@ -1,17 +1,13 @@
 #!/bin/bash
-# Start X virtual framebuffer
-Xvfb :99 -screen 0 1024x768x16 &
 
-# Start PulseAudio
-pulseaudio --start --file=/home/myuser/.config/pulse/default.pa --disallow-exit --disallow-module-loading --exit-idle-time=-1 --no-cpu-limit --disable-shm=true --system=false
+# Start X virtual framebuffer in the background
+Xvfb :99 -screen 0 1280x720x16 &
 
-# Delay to ensure services start
-sleep 5
+# Start x11vnc server with password and optimized settings
+x11vnc -usepw -forever -display :99 -noxdamage &
 
-# Launch the main Python application
+# Start the Pygame application
 exec python3 main.py
-
-
 
 
 

@@ -4,9 +4,10 @@ metadata:
   name: piano-vnc
   namespace: default
 spec:
-  ports:
-  - port: 5900
-    targetPort: 5900
   selector:
     app: piano
+  ports:
+  - protocol: TCP
+    port: 5900
+    targetPort: 5900
   type: LoadBalancer

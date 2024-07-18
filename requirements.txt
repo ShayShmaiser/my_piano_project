@@ -5,4 +5,4 @@ pygame-ce==2.5.0
 pygame_gui==0.6.12
 pymongo==4.8.0
 python-i18n==0.3.9
-
+pytest

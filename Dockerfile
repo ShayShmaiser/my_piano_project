@@ -270,58 +270,104 @@
 FROM python:3.8-slim
 
 ENV PYTHONUNBUFFERED=1
-ENV SDL_AUDIODRIVER=pulse
+ENV SDL_AUDIODRIVER=dummy  
 ENV SDL_VIDEODRIVER=x11
 ENV DISPLAY=:99
 
-# Install necessary packages including x11, SDL2, audio libraries, and development tools
 RUN apt-get update && \
-    apt-get install -y pulseaudio x11vnc xvfb x11-apps python3-dev \
-                       libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev \
-                       libsdl2-ttf-dev libsmpeg-dev libportmidi-dev \
-                       libavformat-dev libswscale-dev libjpeg-dev \
-                       libfreetype6-dev alsa-utils alsa-oss libasound2 procps && \
+    apt-get install -y x11vnc xvfb x11-apps python3-dev \
+                       libsdl2-dev libsdl2-image-dev \
+                       libsdl2-ttf-dev libsmpeg-dev \
+                       libportmidi-dev libavformat-dev \
+                       libswscale-dev libjpeg-dev \
+                       libfreetype6-dev procps && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Ensure pip is updated and pygame is installed
-RUN python -m pip install --upgrade pip && \
-    pip install pygame
+RUN python -m pip install --upgrade pip
 
-# Create directories and set permissions as root
-RUN mkdir -p /app /app/pulse /app/pulse_native /tmp/.X11-unix && \
-    chmod -R 1777 /tmp/.X11-unix && \
-    chmod -R 777 /app/pulse_native
+RUN mkdir -p /app
 
-# Copy entrypoint script and make it executable
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
-
-# Create user and set up home directory
-RUN useradd -ms /bin/bash myuser && \
-    mkdir -p /home/myuser/.config/pulse && \
-    chown -R myuser:myuser /home/myuser
-
-# Prepare PulseAudio configuration before switching to user
-COPY pulseaudio-default.pa /home/myuser/.config/pulse/default.pa
-COPY daemon.conf /home/myuser/.config/pulse/daemon.conf
-RUN chown -R myuser:myuser /home/myuser/.config
-
-# Switch to user
-USER myuser
-
-# Set the working directory and copy application files
 WORKDIR /app
+
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy additional required files
 COPY . /app/
+
 COPY __init__.py /usr/local/lib/python3.8/site-packages/pygame/__init__.py
 COPY ui_tab_container.py /usr/local/lib/python3.8/site-packages/pygame_gui/elements/ui_tab_container.py
 COPY gui_font_pygame.py /usr/local/lib/python3.8/site-packages/pygame_gui/core/gui_font_pygame.py
-COPY cookie /app/cookie
+
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+# Set VNC password
+RUN mkdir -p /root/.vnc \
+    && x11vnc -storepasswd yourpassword /root/.vnc/passwd
+
+CMD ["/app/entrypoint.sh"]
+
+
+
+
+
+
+
+# ENV SDL_AUDIODRIVER=pulse
+# ENV SDL_VIDEODRIVER=x11
+# ENV DISPLAY=:99
+
+# RUN apt-get update && \
+#     apt-get install -y pulseaudio x11vnc xvfb x11-apps python3-dev \
+#                        libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev \
+#                        libsdl2-ttf-dev libsmpeg-dev libportmidi-dev \
+#                        libavformat-dev libswscale-dev libjpeg-dev \
+#                        libfreetype6-dev alsa-utils alsa-oss libasound2 procps && \
+#     apt-get clean && \
+#     rm -rf /var/lib/apt/lists/*
+
+# # Ensure pip is updated and pygame is installed
+# RUN python -m pip install --upgrade pip && \
+#     pip install pygame
+
+# Create directories and set permissions as root
+# RUN mkdir -p /app /app/pulse /app/pulse_native /tmp/.X11-unix && \
+#     chmod -R 1777 /tmp/.X11-unix && \
+#     chmod -R 777 /app/pulse_native
+
+# # Copy entrypoint script and make it executable
+# COPY entrypoint.sh /app/entrypoint.sh
+# RUN chmod +x /app/entrypoint.sh
+
+# # Create user and set up home directory
+# RUN useradd -ms /bin/bash myuser && \
+#     mkdir -p /home/myuser/.config/pulse && \
+#     chown -R myuser:myuser /home/myuser
+
+# Prepare PulseAudio configuration before switching to user
+# COPY pulseaudio-default.pa /home/myuser/.config/pulse/default.pa
+# COPY daemon.conf /home/myuser/.config/pulse/daemon.conf
+# RUN chown -R myuser:myuser /home/myuser/.config
+
+# # Switch to user
+# USER myuser
+
+# # Set the working directory and copy application files
+# WORKDIR /app
+# COPY requirements.txt /app/
+# RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy additional required files
+# COPY . /app/
+# COPY __init__.py /usr/local/lib/python3.8/site-packages/pygame/__init__.py
+# COPY ui_tab_container.py /usr/local/lib/python3.8/site-packages/pygame_gui/elements/ui_tab_container.py
+# COPY gui_font_pygame.py /usr/local/lib/python3.8/site-packages/pygame_gui/core/gui_font_pygame.py
+# COPY cookie /app/cookie
 
 # Start the application using the entrypoint script
-ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["python3", "main.py"]
+# ENTRYPOINT ["/app/entrypoint.sh"]
+# CMD ["python3", "main.py"]

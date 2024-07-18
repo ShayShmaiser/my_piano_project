@@ -152,18 +152,11 @@
 
 
 
-
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: piano
   namespace: default
-  annotations:
-    meta.helm.sh/release-name: piano-release
-    meta.helm.sh/release-namespace: default
-  labels:
-    app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
   selector:
@@ -176,12 +169,17 @@ spec:
     spec:
       containers:
       - name: piano
-        image: shayshmaiser/piano-app:5.8
+        image: shayshmaiser/piano-app:1.2.4
         command: ["/app/entrypoint.sh"]
+        ports:
+        - containerPort: 5900
         resources:
           requests:
-            cpu: 100m
-            memory: 256Mi
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            cpu: 400m
+            memory: 1024Mi
         env:
         - name: MONGO_URL
           value: "mongodb://shayshmaiser:PmRtpwEnX6CldTMb@mongodb-service:27017/bikorotDB"
@@ -190,12 +188,4 @@ spec:
         - name: SDL_VIDEODRIVER
           value: "x11"
         - name: DISPLAY
-          value: "host.docker.internal:0"
-      #   volumeMounts:
-      #   - name: x11-socket
-      #     mountPath: /tmp/.X11-unix
-      # volumes:
-      # - name: x11-socket
-      #   hostPath:
-      #     path: /tmp/.X11-unix
-
+          value: ":99"

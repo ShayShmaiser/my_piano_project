@@ -6,8 +6,8 @@ from pymongo import MongoClient
 
 # logging.basicConfig(filename="/app/piano_app.log", level=logging.DEBUG, 
 #                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-client = MongoClient('mongodb+srv://shayshmaiser:PmRtpwEnX6CldTMb@players.tplziu7.mongodb.net/')
-# client = MongoClient("mongodb://shayshmaiser:PmRtpwEnX6CldTMb@localhost:27017/bikorotDB")
+# client = MongoClient('mongodb+srv://shayshmaiser:PmRtpwEnX6CldTMb@players.tplziu7.mongodb.net/')
+client = MongoClient("mongodb://shayshmaiser:PmRtpwEnX6CldTMb@localhost:27017/bikorotDB")
 db = client["bikorotDB"] 
 collection = db["Users"]  
 
